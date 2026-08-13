@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CyberShield AI</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            🛡️ CyberShield <span>AI</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+    </nav>
+
+
+    <!-- Main Section -->
+    <main class="container">
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <p class="tag">AI-POWERED CYBERSECURITY</p>
+
+                <h1>
+                    Detect Phishing URLs
+                    <span>Before It's Too Late.</span>
+                </h1>
+
+                <p class="description">
+                    CyberShield AI analyzes website URLs using Machine Learning
+                    to identify potentially dangerous phishing websites.
+                </p>
+
+                <!-- URL Scanner -->
+                <form method="POST" class="scanner">
+
+                    <input
+                        type="text"
+                        name="url"
+                        placeholder="Enter or paste a website URL..."
+                        required
+                    >
+
+                    <button type="submit">
+                        🔍 Scan URL
+                    </button>
+
+                </form>
+
+                <p class="privacy">
+                    🔒 Your URL is analyzed securely.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- Result -->
+        {% if result %}
+
+        <section class="result-card
+            {% if result == 'SAFE' %}
+                safe
+            {% else %}
+                danger
+            {% endif %}">
+
+            <div class="result-icon">
+                {% if result == "SAFE" %}
+                    ✓
+                {% else %}
+                    !
+                {% endif %}
+            </div>
+
+            <div class="result-content">
+
+                <h2>{{ result }}</h2>
+
+                {% if result == "SAFE" %}
+                    <p>
+                        This URL appears to be safe based on the
+                        current analysis.
+                    </p>
+                {% else %}
+                    <p>
+                        Warning! This URL may be a phishing website.
+                    </p>
+                {% endif %}
+
+                <div class="risk">
+                    Risk Score:
+                    <strong>{{ score }}%</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- Features -->
+        <section class="features">
+
+            <h2>How CyberShield Works</h2>
+
+            <div class="feature-grid">
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>URL Analysis</h3>
+                    <p>
+                        Extracts important security features from
+                        the submitted URL.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Machine Learning</h3>
+                    <p>
+                        Uses a trained Random Forest model to
+                        classify URLs.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚠️</div>
+                    <h3>Risk Detection</h3>
+                    <p>
+                        Provides a risk score to help identify
+                        potentially malicious websites.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 CyberShield AI | Phishing Detection System</p>
+    </footer>
+
+</body>
+</html>

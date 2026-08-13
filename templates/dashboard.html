@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>CyberShield Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+
+        <div class="logo">
+            🛡️ CyberShield <span>AI</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="/">Scanner</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+
+    </nav>
+
+
+    <main class="dashboard">
+
+        <div class="dashboard-header">
+
+            <div>
+                <p class="tag">SECURITY ANALYTICS</p>
+
+                <h1>Scan Dashboard</h1>
+
+                <p>
+                    Monitor your URL scanning activity.
+                </p>
+            </div>
+
+            <a href="/" class="scan-button">
+                + Scan New URL
+            </a>
+
+        </div>
+
+
+        <!-- Statistics -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+                <span>Total Scans</span>
+                <strong>{{ history|length }}</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Safe URLs</span>
+
+                <strong>
+                    {{ history
+                       |selectattr("result", "equalto", "SAFE")
+                       |list
+                       |length }}
+                </strong>
+
+            </div>
+
+            <div class="stat-card danger-stat">
+                <span>Phishing URLs</span>
+
+                <strong>
+                    {{ history
+                       |selectattr("result", "equalto", "PHISHING")
+                       |list
+                       |length }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Scan History -->
+
+        <section class="history-card">
+
+            <div class="section-title">
+
+                <h2>Scan History</h2>
+
+                <span>
+                    {{ history|length }} scans
+                </span>
+
+            </div>
+
+
+            {% if history %}
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>#</th>
+                            <th>URL</th>
+                            <th>Result</th>
+                            <th>Risk Score</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in history %}
+
+                        <tr>
+
+                            <td>{{ loop.index }}</td>
+
+                            <td class="url">
+                                {{ item.url }}
+                            </td>
+
+                            <td>
+
+                                {% if item.result == "SAFE" %}
+
+                                <span class="badge safe-badge">
+                                    ✓ SAFE
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge danger-badge">
+                                    ⚠ PHISHING
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                <div class="risk-bar">
+
+                                    <div
+                                        class="risk-fill
+                                        {% if item.result == 'PHISHING' %}
+                                            danger-fill
+                                        {% endif %}"
+                                        style="width: {{ item.score }}%">
+                                    </div>
+
+                                </div>
+
+                                <span>
+                                    {{ item.score }}%
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="empty">
+
+                <div>🔍</div>
+
+                <h3>No scans yet</h3>
+
+                <p>
+                    Start by scanning a URL from the homepage.
+                </p>
+
+                <a href="/">
+                    Scan URL
+                </a>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            © 2026 CyberShield AI | Intelligent Phishing Detection
+        </p>
+
+    </footer>
+
+</body>
+</html>
