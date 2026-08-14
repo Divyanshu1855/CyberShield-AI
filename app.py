@@ -37,16 +37,46 @@ def home():
 
         url = request.form["url"]
 
-        prediction = model.predict(
-            extract_features(url)
-        )[0]
+        features = extract_features(url)
+
+        prediction = model.predict(features)[0]
 
         if prediction == 0:
             result = "SAFE"
-            score = 20
         else:
             result = "PHISHING"
-            score = 90
+
+        # Dynamic risk score
+        length, has_ip, https, suspicious = features[0]
+
+        score = 0
+
+        # URL length
+        if length > 75:
+            score += 25
+        elif length > 50:
+            score += 15
+        elif length > 30:
+            score += 5
+
+        # IP address
+        if has_ip:
+            score += 30
+
+        # HTTPS
+        if not https:
+            score += 20
+
+        # Suspicious keywords
+        if suspicious:
+            score += 25
+
+        # Limit score
+        score = min(score, 100)
+
+        # ML phishing prediction
+        if prediction == 1:
+            score = max(score, 70)
 
         history.append({
             "url": url,
