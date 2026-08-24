@@ -69,3 +69,9 @@ The trained model is saved as:
 
 ```text
 phishing_model.pkl
+
+## Quick start
+
+1. Clone this repository.
+2. Install prerequisites from project files.
+3. Build and run the project's standard tests.
