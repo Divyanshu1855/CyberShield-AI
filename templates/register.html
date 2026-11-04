@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register | CyberShield AI</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="auth-container">
+    <div class="auth-card">
+
+        <h1>CyberShield <span>AI</span></h1>
+        <h2>Create Account</h2>
+
+        {% for message in get_flashed_messages() %}
+            <p>{{ message }}</p>
+        {% endfor %}
+
+        <form method="POST">
+
+            <input type="text"
+                   name="name"
+                   placeholder="Full Name"
+                   required>
+
+            <input type="email"
+                   name="email"
+                   placeholder="Email"
+                   required>
+
+            <input type="password"
+                   name="password"
+                   placeholder="Password (minimum 8 characters)"
+                   minlength="8"
+                   required>
+
+            <button type="submit">Register</button>
+
+        </form>
+
+        <p>Already registered?
+            <a href="{{ url_for('login') }}">Login</a>
+        </p>
+
+    </div>
+</div>
+
+</body>
+</html>
