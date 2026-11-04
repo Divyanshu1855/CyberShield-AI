@@ -23,9 +23,9 @@ import re
 import joblib
 
 
-# -------------------------------
+# --------------------------------
 # FLASK CONFIGURATION
-# -------------------------------
+# --------------------------------
 
 app = Flask(__name__)
 
@@ -38,16 +38,16 @@ app.secret_key = os.environ.get(
 init_db()
 
 
-# -------------------------------
-# LOAD MACHINE LEARNING MODEL
-# -------------------------------
+# --------------------------------
+# LOAD ML MODEL
+# --------------------------------
 
 model = joblib.load("phishing_model.pkl")
 
 
-# -------------------------------
+# --------------------------------
 # LOGIN REQUIRED DECORATOR
-# -------------------------------
+# --------------------------------
 
 def login_required(function):
 
@@ -63,9 +63,9 @@ def login_required(function):
     return wrapper
 
 
-# -------------------------------
+# --------------------------------
 # URL FEATURE EXTRACTION
-# -------------------------------
+# --------------------------------
 
 def extract_features(url):
 
@@ -94,9 +94,9 @@ def extract_features(url):
     return [[length, has_ip, https, suspicious]]
 
 
-# -------------------------------
+# --------------------------------
 # RISK SCORE CALCULATION
-# -------------------------------
+# --------------------------------
 
 def calculate_risk_score(features, prediction):
 
@@ -128,9 +128,9 @@ def calculate_risk_score(features, prediction):
     return score
 
 
-# -------------------------------
+# --------------------------------
 # HOME / URL SCANNER
-# -------------------------------
+# --------------------------------
 
 @app.route("/", methods=["GET", "POST"])
 @login_required
@@ -163,7 +163,7 @@ def home():
                     prediction
                 )
 
-                # Save scan for the logged-in user
+                # Save scan in SQLite for current user
                 save_scan(
                     session["user_id"],
                     scanned_url,
@@ -171,8 +171,10 @@ def home():
                     score
                 )
 
-            except Exception as error:
-                print("Scanning error:", error)
+            except Exception:
+                app.logger.exception("Scanning error")
+                result = ""
+                score = 0
                 flash("Unable to scan this URL. Please try again.", "danger")
 
     return render_template(
@@ -183,9 +185,9 @@ def home():
     )
 
 
-# -------------------------------
+# --------------------------------
 # USER REGISTRATION
-# -------------------------------
+# --------------------------------
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -219,14 +221,14 @@ def register():
             flash("Registration successful! Please login.", "success")
             return redirect(url_for("login"))
 
-        flash("Email already registered. Please login.", "warning")
+        flash("Email already registered.", "warning")
 
     return render_template("register.html")
 
 
-# -------------------------------
+# --------------------------------
 # USER LOGIN
-# -------------------------------
+# --------------------------------
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -260,9 +262,9 @@ def login():
     return render_template("login.html")
 
 
-# -------------------------------
+# --------------------------------
 # USER LOGOUT
-# -------------------------------
+# --------------------------------
 
 @app.route("/logout")
 @login_required
@@ -275,17 +277,21 @@ def logout():
     return redirect(url_for("login"))
 
 
-# -------------------------------
+# --------------------------------
 # USER DASHBOARD
-# -------------------------------
+# --------------------------------
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
 
-    history = get_user_scans(
-        session["user_id"]
-    )
+    try:
+        history = get_user_scans(session["user_id"])
+
+    except Exception:
+        app.logger.exception("Dashboard error")
+        history = []
+        flash("Could not load scan history.", "danger")
 
     total_scans = len(history)
 
@@ -309,9 +315,9 @@ def dashboard():
     )
 
 
-# -------------------------------
+# --------------------------------
 # RUN APPLICATION
-# -------------------------------
+# --------------------------------
 
 if __name__ == "__main__":
 
